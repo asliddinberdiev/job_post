@@ -16,19 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Validate SSH Private Key
-        run: |
-          echo "${{ secrets.SSH_KEY }}" > id_key
-          chmod 600 id_key
-          if ssh-keygen -y -f id_key > /dev/null; then
-            echo "✅ SSH private key is valid."
-          else
-            echo "❌ SSH private key is invalid."
-            exit 1
-          fi
-          
-
-
       - name: Copy deployment files
         uses: appleboy/scp-action@master
         with:
@@ -49,11 +36,11 @@ jobs:
           script: |
             cd ~/apps/job_post
             echo "Stopping job_post container..."
-            docker-compose stop job_post
+            docker compose stop job_post
             echo "Removing job_post container..."
-            docker-compose rm -f job_post
+            docker compose rm -f job_post
             echo "Building job_post container..."
-            docker-compose build job_post
+            docker compose build job_post
             echo "Starting job_post container..."
-            docker-compose up -d job_post
+            docker compose up -d job_post
 
