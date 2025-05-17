@@ -10,8 +10,7 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - ./.bin/:/root/
-      - ./config/:/root/config/
+      - app_data:/root/
     env_file:
       - .env
     restart: always
@@ -28,7 +27,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     volumes:
-      - ./.data/db:/data/db
+      - mongo_data:/data/db
     env_file:
       - .env
     ports:
@@ -39,3 +38,7 @@ services:
 networks:
   network:
     driver: bridge
+
+volumes:
+  app_data:
+  mongo_data:
