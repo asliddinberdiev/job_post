@@ -1,14 +1,14 @@
 package handler
 
 import (
-	"errors"
 	"log/slog"
 
 	"github.com/asliddinberdiev/job_post/internal/config"
-	"github.com/asliddinberdiev/job_post/internal/models"
 	"github.com/asliddinberdiev/job_post/internal/repository"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
@@ -33,34 +33,26 @@ func (h *Handler) CreateApp() *fiber.App {
 		ErrorHandler: h.errorHandler,
 	})
 
+	corsConfig := cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
+		AllowHeaders: "Authorization, Origin, Content-Type, Accept, Content-Language, Accept-Language, Access-Control-Allow-Headers",
+	}
+
+	app.Use(logger.New())
 	app.Use(recover.New())
+	app.Use(cors.New(corsConfig))
 
 	api := app.Group("/api")
-	api.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("started")
-	})
+
+	posts := api.Group("/posts")
+	{
+		posts.Post("/", h.CreatePost)
+		posts.Get("/", h.GetPosts)
+		posts.Get("/:id", h.GetPost)
+		posts.Put("/:id", h.UpdatePost)
+		posts.Delete("/:id", h.DeletePost)
+	}
 
 	return app
-}
-
-func (h *Handler) errorHandler(ctx *fiber.Ctx, err error) error {
-	code := fiber.StatusInternalServerError
-	message := "something went wrong"
-
-	var fe *fiber.Error
-	if errors.As(err, &fe) {
-		code = fe.Code
-		message = fe.Message
-	}
-
-	if h.cfg.App.Environment != "prod" {
-		message = err.Error()
-	}
-
-	h.log.Error("error", "error", err)
-
-	return ctx.Status(code).JSON(&models.MessageResponse{
-		Code:    code,
-		Message: message,
-	})
 }
