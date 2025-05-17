@@ -16,8 +16,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Debug SSH Key (optional)
-        run: echo "${{ secrets.SSH_KEY }}" | ssh-keygen -lf -
+      - name: Validate SSH Private Key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > id_key
+          chmod 600 id_key
+          ssh-keygen -y -f id_key > /dev/null
 
 
       - name: Copy deployment files
