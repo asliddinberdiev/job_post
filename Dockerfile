@@ -1,17 +1,22 @@
-ARG APP=job_post
-
-FROM golang:alpine3.16 AS builder
-RUN apk --no-cache add make git ca-certificates
+FROM golang:1.24.2-alpine AS builder
 
 WORKDIR /app
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
 COPY . .
 
-ARG APP
-RUN make build APP=${APP}
+RUN CGO_ENABLED=0 GOOS=linux go build -o app ./cmd/app/main.go
 
-FROM alpine
+FROM alpine:latest
+
 RUN apk --no-cache add ca-certificates
 
-ARG APP
-COPY --from=builder /app/bin/${APP} /${APP}
-ENTRYPOINT ["/${APP}"]
+WORKDIR /root/
+
+COPY --from=builder /app/app /root/app
+COPY --from=builder /app/config /root/config
+
+CMD ["./app"]
