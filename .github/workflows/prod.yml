@@ -20,7 +20,13 @@ jobs:
         run: |
           echo "${{ secrets.SSH_KEY }}" > id_key
           chmod 600 id_key
-          ssh-keygen -y -f id_key > /dev/null
+          if ssh-keygen -y -f id_key > /dev/null; then
+            echo "✅ SSH private key is valid."
+          else
+            echo "❌ SSH private key is invalid."
+            exit 1
+          fi
+          
 
 
       - name: Copy deployment files
