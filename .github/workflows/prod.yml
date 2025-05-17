@@ -16,6 +16,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Debug SSH Key (optional)
+        run: echo "${{ secrets.SSH_KEY }}" | ssh-keygen -lf -
+
+
       - name: Copy deployment files
         uses: appleboy/scp-action@master
         with:
