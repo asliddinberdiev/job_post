@@ -35,12 +35,12 @@ jobs:
           envs: APP_ENVIRONMENT
           script: |
             cd ~/apps/job_post
-            echo "Stopping job_post container..."
-            docker compose stop job_post
-            echo "Removing job_post container..."
-            docker compose rm -f job_post
-            echo "Building job_post container..."
-            docker compose build job_post
-            echo "Starting job_post container..."
-            docker compose up -d job_post
+            echo "Stopping app container..."
+            docker compose stop app
+            echo "Removing app container..."
+            docker compose rm -f app
+            echo "Building app container..."
+            docker compose build app
+            echo "Starting app container..."
+            docker compose up -d app
 
