@@ -29,6 +29,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          echo "DOCKERHUB_USERNAME is: $DOCKERHUB_USERNAME"
+          echo "IMAGE_NAME is: $IMAGE_NAME"
           echo "Building Docker image: $IMAGE_NAME:$TAG"
           docker build -t $IMAGE_NAME:$TAG .
           docker push $IMAGE_NAME:$TAG
