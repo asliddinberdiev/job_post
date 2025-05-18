@@ -1,0 +1,364 @@
+basePath: /api
+definitions:
+  github_com_asliddinberdiev_job_post_internal_models.Contact:
+    properties:
+      linkedin:
+        type: string
+      phone:
+        type: string
+      telegram:
+        type: string
+    required:
+    - phone
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.CreatePostRequest:
+    properties:
+      benefits:
+        items:
+          type: string
+        type: array
+      company_name:
+        minLength: 3
+        type: string
+      contact:
+        $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.Contact'
+      deadline:
+        type: string
+      description:
+        minLength: 10
+        type: string
+      employment_type:
+        enum:
+        - remote
+        - onsite
+        - hybrid
+        type: string
+      experience:
+        minimum: 0
+        type: number
+      job_type:
+        enum:
+        - full
+        - part
+        type: string
+      location:
+        $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.Location'
+      requirements:
+        items:
+          type: string
+        type: array
+      responsibilities:
+        items:
+          type: string
+        type: array
+      salary:
+        $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.Salary'
+      tags:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      title:
+        minLength: 3
+        type: string
+    required:
+    - benefits
+    - company_name
+    - contact
+    - employment_type
+    - experience
+    - job_type
+    - location
+    - requirements
+    - responsibilities
+    - salary
+    - tags
+    - title
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.Location:
+    properties:
+      address:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+    required:
+    - latitude
+    - longitude
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.ResponseData:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.ResponseID:
+    properties:
+      id:
+        type: string
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.ResponseList:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      total:
+        type: integer
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.ResponseMessage:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.Salary:
+    properties:
+      currency:
+        enum:
+        - UZS
+        - RUB
+        - USD
+        type: string
+      max:
+        minimum: 0
+        type: integer
+      min:
+        minimum: 0
+        type: integer
+    required:
+    - currency
+    - max
+    - min
+    type: object
+  github_com_asliddinberdiev_job_post_internal_models.UpdatePostRequest:
+    properties:
+      benefits:
+        items:
+          type: string
+        type: array
+      company_name:
+        minLength: 3
+        type: string
+      contact:
+        $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.Contact'
+      deadline:
+        type: string
+      description:
+        minLength: 10
+        type: string
+      employment_type:
+        enum:
+        - remote
+        - onsite
+        - hybrid
+        type: string
+      experience:
+        minimum: 0
+        type: number
+      job_type:
+        enum:
+        - full
+        - part
+        type: string
+      location:
+        $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.Location'
+      requirements:
+        items:
+          type: string
+        type: array
+      responsibilities:
+        items:
+          type: string
+        type: array
+      salary:
+        $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.Salary'
+      tags:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      title:
+        minLength: 3
+        type: string
+    required:
+    - benefits
+    - requirements
+    - responsibilities
+    - tags
+    type: object
+host: mvp.yaqingina.xyz
+info:
+  contact: {}
+  description: Job Post API
+  title: Job Post API
+  version: 1.0.0
+paths:
+  /posts:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Skip
+        in: query
+        name: skip
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+      summary: Get posts
+      tags:
+      - Posts
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create post
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.CreatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+      summary: Create post
+      tags:
+      - Posts
+  /posts/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+      summary: Delete post
+      tags:
+      - Posts
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+      summary: Get post
+      tags:
+      - Posts
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update post
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.UpdatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_asliddinberdiev_job_post_internal_models.ResponseMessage'
+      summary: Update post
+      tags:
+      - Posts
+schemes:
+- http
+- https
+swagger: "2.0"

@@ -44,5 +44,6 @@ jobs:
             docker pull "$IMAGE_NAME:$TAG"
             docker stop "$CONTAINER_NAME" || true
             docker rm "$CONTAINER_NAME" || true
+            docker rmi "$IMAGE_NAME" || true
             docker network create root_network || true
             docker run -d --name "$CONTAINER_NAME" --network root_network -p 8000:8000 --env-file "$ENV_FILE_NAME" "$IMAGE_NAME:$TAG"

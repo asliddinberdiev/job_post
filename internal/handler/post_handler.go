@@ -8,6 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// @Summary		Create post
+// @Tags		Posts
+// @Accept		json
+// @Produce		json
+// @Param		request body	models.CreatePostRequest	true	"Create post"
+// @Success		201	{object} models.ResponseID
+// @Failure		400	{object} models.ResponseMessage
+// @Failure		500	{object} models.ResponseMessage
+// @Router		/posts [post]
 func (h *Handler) CreatePost(c *fiber.Ctx) error {
 	var req models.CreatePostRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -47,6 +56,16 @@ func (h *Handler) CreatePost(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(&models.ResponseID{ID: id})
 }
 
+// @Summary		Get post
+// @Tags		Posts
+// @Accept		json
+// @Produce		json
+// @Param		id	path	string	true	"Post ID"
+// @Success		200	{object} models.ResponseData
+// @Failure		400	{object} models.ResponseMessage
+// @Failure		404	{object} models.ResponseMessage
+// @Failure		500	{object} models.ResponseMessage
+// @Router		/posts/{id} [get]
 func (h *Handler) GetPost(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
@@ -70,6 +89,16 @@ func (h *Handler) GetPost(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary		Get posts
+// @Tags		Posts
+// @Accept		json
+// @Produce		json
+// @Param		limit	query	int	false	"Limit"
+// @Param		skip	query	int	false	"Skip"
+// @Success		200	{object} models.ResponseList
+// @Failure		400	{object} models.ResponseMessage
+// @Failure		500	{object} models.ResponseMessage
+// @Router		/posts [get]
 func (h *Handler) GetPosts(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
 	skip := c.QueryInt("skip", 0)
@@ -87,6 +116,17 @@ func (h *Handler) GetPosts(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary		Update post
+// @Tags		Posts
+// @Accept		json
+// @Produce		json
+// @Param		id	path	string	true	"Post ID"
+// @Param		request	body	models.UpdatePostRequest	true	"Update post"
+// @Success		200	{object} models.ResponseMessage
+// @Failure		400	{object} models.ResponseMessage
+// @Failure		404	{object} models.ResponseMessage
+// @Failure		500	{object} models.ResponseMessage
+// @Router		/posts/{id} [put]
 func (h *Handler) UpdatePost(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
@@ -117,6 +157,16 @@ func (h *Handler) UpdatePost(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary		Delete post
+// @Tags		Posts
+// @Accept		json
+// @Produce		json
+// @Param		id	path	string	true	"Post ID"
+// @Success		200	{object} models.ResponseMessage
+// @Failure		400	{object} models.ResponseMessage
+// @Failure		404	{object} models.ResponseMessage
+// @Failure		500	{object} models.ResponseMessage
+// @Router		/posts/{id} [delete]
 func (h *Handler) DeletePost(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
