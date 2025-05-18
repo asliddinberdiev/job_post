@@ -29,7 +29,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          echo "DOCKERHUB_USERNAME is: $DOCKERHUB_USERNAME"
+          cat "DOCKERHUB_USERNAME is: $DOCKERHUB_USERNAME"
           echo "IMAGE_NAME is: $IMAGE_NAME"
           echo "TAG is: $TAG"
           echo "ENV_FILE_NAME is: $ENV_FILE_NAME"
@@ -45,7 +45,7 @@ jobs:
           key: ${{ env.SSH_KEY }}
           envs: IMAGE_NAME,TAG,ENV_FILE_NAME,CONTAINER_NAME,DOCKERHUB_USERNAME,DOCKERHUB_PASSWORD
           script: |
-            echo "Debug: IMAGE_NAME is: $IMAGE_NAME"
+            cat "Debug: IMAGE_NAME is: $IMAGE_NAME"
             echo "Debug: TAG is: $TAG"
             echo "Debug: ENV_FILE_NAME is: $ENV_FILE_NAME"
             echo "Debug: CONTAINER_NAME is: $CONTAINER_NAME"
