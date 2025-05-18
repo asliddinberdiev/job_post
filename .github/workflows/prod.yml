@@ -40,10 +40,10 @@ jobs:
           key: ${{ env.SSH_KEY }}
           envs: IMAGE_NAME,TAG,ENV_FILE_NAME,CONTAINER_NAME,DOCKERHUB_USERNAME,DOCKERHUB_PASSWORD
           script: |
-            docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
-            docker pull "$IMAGE_NAME:$TAG"
             docker stop "$CONTAINER_NAME" || true
             docker rm "$CONTAINER_NAME" || true
-            docker rmi "$IMAGE_NAME" || true
+            docker rmi "$IMAGE_NAME:$TAG" || true
+            docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+            docker pull "$IMAGE_NAME:$TAG"
             docker network create root_network || true
             docker run -d --name "$CONTAINER_NAME" --network root_network -p 8000:8000 --env-file "$ENV_FILE_NAME" "$IMAGE_NAME:$TAG"

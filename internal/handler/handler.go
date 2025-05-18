@@ -35,7 +35,7 @@ func NewHandler(log *slog.Logger, cfg *config.Config, valid *validator.Validate,
 // @version							1.0.0
 // @description						Job Post API
 // @termsOfService
-// @schemes							http https
+// @schemes							https
 // @host							mvp.yaqingina.xyz
 // @BasePath						/api
 func (h *Handler) CreateApp() *fiber.App {

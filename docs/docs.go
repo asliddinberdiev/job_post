@@ -541,7 +541,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
 	Host:             "mvp.yaqingina.xyz",
 	BasePath:         "/api",
-	Schemes:          []string{"http", "https"},
+	Schemes:          []string{"https"},
 	Title:            "Job Post API",
 	Description:      "Job Post API",
 	InfoInstanceName: "swagger",
