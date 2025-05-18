@@ -321,7 +321,7 @@ paths:
       summary: Get post
       tags:
       - Posts
-    put:
+    patch:
       consumes:
       - application/json
       parameters:

@@ -71,7 +71,7 @@ func (h *Handler) CreateApp() *fiber.App {
 		posts.Post("/", h.CreatePost)
 		posts.Get("/", h.GetPosts)
 		posts.Get("/:id", h.GetPost)
-		posts.Put("/:id", h.UpdatePost)
+		posts.Patch("/:id", h.UpdatePost)
 		posts.Delete("/:id", h.DeletePost)
 	}
 

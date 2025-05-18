@@ -151,7 +151,7 @@
                     }
                 }
             },
-            "put": {
+            "delete": {
                 "consumes": [
                     "application/json"
                 ],
@@ -161,7 +161,7 @@
                 "tags": [
                     "Posts"
                 ],
-                "summary": "Update post",
+                "summary": "Delete post",
                 "parameters": [
                     {
                         "type": "string",
@@ -169,15 +169,6 @@
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "Update post",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_asliddinberdiev_job_post_internal_models.UpdatePostRequest"
-                        }
                     }
                 ],
                 "responses": {
@@ -207,7 +198,7 @@
                     }
                 }
             },
-            "delete": {
+            "patch": {
                 "consumes": [
                     "application/json"
                 ],
@@ -217,7 +208,7 @@
                 "tags": [
                     "Posts"
                 ],
-                "summary": "Delete post",
+                "summary": "Update post",
                 "parameters": [
                     {
                         "type": "string",
@@ -225,6 +216,15 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Update post",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_asliddinberdiev_job_post_internal_models.UpdatePostRequest"
+                        }
                     }
                 ],
                 "responses": {

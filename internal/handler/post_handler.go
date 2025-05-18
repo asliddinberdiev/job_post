@@ -126,7 +126,7 @@ func (h *Handler) GetPosts(c *fiber.Ctx) error {
 // @Failure		400	{object} models.ResponseMessage
 // @Failure		404	{object} models.ResponseMessage
 // @Failure		500	{object} models.ResponseMessage
-// @Router		/posts/{id} [put]
+// @Router		/posts/{id} [patch]
 func (h *Handler) UpdatePost(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
