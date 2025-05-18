@@ -11,10 +11,10 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func Run(configPath string) {
+func Run() {
 	logger := slog.Default()
 
-	cfg, err := config.Init(configPath)
+	cfg, err := config.Init()
 	if err != nil {
 		logger.Error("failed to load configs", "error", err)
 		return

@@ -3,24 +3,21 @@ package config
 import (
 	"fmt"
 	"log"
-	"os"
-	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/spf13/viper"
 )
 
 type Config struct {
-	App     App     `mapstructure:"app"`
-	MongoDB MongoDB `mapstructure:"mongodb"`
+	App     App
+	MongoDB MongoDB
 }
 
 type App struct {
-	Environment string `envconfig:"APP_ENVIRONMENT" default:"dev" required:"true" mapstructure:"environment"`
-	Name        string `envconfig:"APP_NAME" default:"job_post" required:"true" mapstructure:"name"`
-	Host        string `envconfig:"APP_HOST" default:"localhost" required:"true" mapstructure:"host"`
-	Port        int    `envconfig:"APP_PORT" default:"8000" required:"true" mapstructure:"port"`
+	Environment string `envconfig:"APP_ENVIRONMENT" default:"dev" required:"true"`
+	Name        string `envconfig:"APP_NAME" default:"job_post" required:"true"`
+	Host        string `envconfig:"APP_HOST" default:"localhost" required:"true"`
+	Port        int    `envconfig:"APP_PORT" default:"8000" required:"true"`
 }
 
 type MongoDB struct {
@@ -31,45 +28,19 @@ type MongoDB struct {
 	Database string `envconfig:"MONGODB_DATABASE" default:"job_post" required:"true"`
 }
 
-func Init(confDir string) (*Config, error) {
-	v := viper.New()
-	v.SetConfigType("yaml")
-
-	if confDir == "" {
-		v.AddConfigPath("./config")
-	}
-	v.AddConfigPath(confDir)
-
-	env := os.Getenv("APP_ENVIRONMENT")
-	if env == "" {
-		env = "dev"
-	}
-
-	v.SetConfigName(env)
-
-	envFile := fmt.Sprintf("%s/%s.env", confDir, env)
-	if err := godotenv.Load(envFile); err != nil {
-		log.Printf("Warning: No %s.env file found in %s: %v", env, confDir, err)
-	}
-
-	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	v.AutomaticEnv()
-
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return nil, err
-		}
+func Init() (*Config, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found")
 	}
 
 	var cfg Config
-	if err := envconfig.Process("", &cfg); err != nil {
+
+	if err := envconfig.Process("APP", &cfg.App); err != nil {
 		return nil, err
 	}
-
-	if v.ConfigFileUsed() != "" {
-		if err := v.Unmarshal(&cfg); err != nil {
-			return nil, err
-		}
+	if err := envconfig.Process("MONGODB", &cfg.MongoDB); err != nil {
+		return nil, err
 	}
 
 	return &cfg, nil

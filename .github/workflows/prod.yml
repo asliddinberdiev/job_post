@@ -6,25 +6,25 @@ on:
       - main
 
 env:
-  TAG: "latest"
-  APP_ENVIRONMENT: "prod"
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+  TAG: ${{ github.ref_name }}
+  ENV_FILE_NAME: ${{ secrets.ENV_FILE_NAME }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Copy deployment files
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "."
-          target: "~/apps/job_post"
-          strip_components: 0
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t $IMAGE_NAME:$TAG .
+          docker push $IMAGE_NAME:$TAG
 
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v0.1.3
@@ -32,11 +32,10 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: APP_ENVIRONMENT
+          envs: IMAGE_NAME,TAG,ENV_FILE_NAME
           script: |
-            cd ~/apps/job_post
-            docker compose stop app
-            docker compose rm -f app
-            docker compose build app
-            docker compose up -d app
-
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            docker pull $IMAGE_NAME:$TAG
+            docker stop $IMAGE_NAME || true
+            docker rm $IMAGE_NAME || true
+            docker run -d --name $IMAGE_NAME -p 8000:8000 --env-file $ENV_FILE_NAME $IMAGE_NAME:$TAG

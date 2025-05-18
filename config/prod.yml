@@ -1,4 +1,0 @@
-app:
-  name: job_post
-  host: app
-  port: 8000
