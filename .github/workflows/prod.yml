@@ -5,14 +5,15 @@ on:
     branches:
       - main
 
-env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
-  TAG: ${{ github.ref_name }}
-  ENV_FILE_NAME: ${{ secrets.ENV_FILE_NAME }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+      TAG: ${{ github.ref_name }}
+      ENV_FILE_NAME: ${{ secrets.ENV_FILE_NAME }}
+      CONTAINER_NAME: ${{ github.event.repository.name }}
 
     steps:
       - name: Checkout code
@@ -23,6 +24,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          echo "Building Docker image: $IMAGE_NAME:$TAG"
           docker build -t $IMAGE_NAME:$TAG .
           docker push $IMAGE_NAME:$TAG
 
@@ -32,10 +34,10 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: IMAGE_NAME,TAG,ENV_FILE_NAME
+          envs: IMAGE_NAME,TAG,ENV_FILE_NAME,CONTAINER_NAME
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
             docker pull $IMAGE_NAME:$TAG
-            docker stop $IMAGE_NAME || true
-            docker rm $IMAGE_NAME || true
-            docker run -d --name $IMAGE_NAME -p 8000:8000 --env-file $ENV_FILE_NAME $IMAGE_NAME:$TAG
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
+            docker run -d --name $CONTAINER_NAME -p 8000:8000 --env-file $ENV_FILE_NAME $IMAGE_NAME:$TAG
