@@ -24,31 +24,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug environment variables
-        run: |
-          echo "VPS_HOST is set to: ${VPS_HOST:-(empty)}"
-          echo "VPS_USER is set to: ${VPS_USER:-(empty)}"
-          echo "SSH_KEY is set to: ${SSH_KEY:-(empty)}"
-          echo "DOCKERHUB_USERNAME is set to: ${DOCKERHUB_USERNAME:-(empty)}"
-          echo "IMAGE_NAME is: ${IMAGE_NAME:-(empty)}"
-          echo "TAG is: ${TAG:-(empty)}"
-          echo "ENV_FILE_NAME is: ${ENV_FILE_NAME:-(empty)}"
-          echo "CONTAINER_NAME is: ${CONTAINER_NAME:-(empty)}"
-          if [ -z "$VPS_HOST" ]; then
-            echo "Error: VPS_HOST is empty or not set"
-            exit 1
-          fi
-
       - name: Log in to DockerHub
         run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
       - name: Build and push Docker image
         run: |
-          echo "DOCKERHUB_USERNAME is: $DOCKERHUB_USERNAME"
-          echo "IMAGE_NAME is: $IMAGE_NAME"
-          echo "TAG is: $TAG"
-          echo "ENV_FILE_NAME is: $ENV_FILE_NAME"
-          echo "Building Docker image: $IMAGE_NAME:$TAG"
           docker build -t "$IMAGE_NAME:$TAG" .
           docker push "$IMAGE_NAME:$TAG"
 
@@ -60,19 +40,6 @@ jobs:
           key: ${{ env.SSH_KEY }}
           envs: IMAGE_NAME,TAG,ENV_FILE_NAME,CONTAINER_NAME,DOCKERHUB_USERNAME,DOCKERHUB_PASSWORD
           script: |
-            echo "Debug: IMAGE_NAME is: $IMAGE_NAME"
-            echo "Debug: TAG is: $TAG"
-            echo "Debug: ENV_FILE_NAME is: $ENV_FILE_NAME"
-            echo "Debug: CONTAINER_NAME is: $CONTAINER_NAME"
-            echo "Debug: DOCKERHUB_USERNAME is: $DOCKERHUB_USERNAME"
-            if [ -z "$IMAGE_NAME" ] || [ -z "$TAG" ] || [ -z "$ENV_FILE_NAME" ] || [ -z "$CONTAINER_NAME" ]; then
-              echo "Error: One or more required environment variables are empty"
-              exit 1
-            fi
-            if [ ! -f "$ENV_FILE_NAME" ]; then
-              echo "Error: Environment file $ENV_FILE_NAME does not exist"
-              exit 1
-            fi
             docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
             docker pull "$IMAGE_NAME:$TAG"
             docker stop "$CONTAINER_NAME" || true
